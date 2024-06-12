@@ -1,0 +1,379 @@
+package application;
+
+import javafx.application.Application;
+import javafx.geometry.Pos;
+import javafx.scene.Scene;
+import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
+import javafx.stage.Stage;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+
+public class SoloHangmanGame extends Application {
+
+    private String wordToGuess;
+    private String hint;
+    private int incorrectGuesses;
+    private Canvas canvas;
+    private Label wordLabel;
+    private TextField guessInput;
+    private Label hintLabel;
+    private Label messageLabel;
+    private char[] currentGuess;
+    private ComboBox<String> categoryComboBox;
+    private BorderPane layout;
+
+    private GameTimer gameTimer;
+    private Label timerLabel;
+    private Label scoreLabel;
+    private Label rankLabel;
+    private int correctGuesses;
+    private String currentUsername;
+    private List<PlayerScore> playerScores = new ArrayList<>();
+
+    @Override
+        public void start(Stage primaryStage) {
+        primaryStage.setTitle("Hangman Game");
+
+        // Create main layout for the main menu
+        VBox menuLayout = new VBox(20);
+        menuLayout.setAlignment(Pos.CENTER);
+
+        categoryComboBox = new ComboBox<>();
+        categoryComboBox.getItems().addAll(Categories.getCategories());
+        categoryComboBox.setValue("Animals"); // Default category
+
+        Button startButton = new Button("Start Game");
+        startButton.setOnAction(e->startGame(primaryStage));
+        styleButton(startButton);
+
+        menuLayout.getChildren().addAll(categoryComboBox, startButton);
+        Scene menuScene = new Scene(menuLayout, 600, 600);
+        primaryStage.setScene(menuScene);
+        primaryStage.show();
+    }
+
+    private void startGame(Stage primaryStage) {
+        layout = new BorderPane();
+        canvas = new Canvas();
+
+        initializeLabels();
+        gameTimer = new GameTimer(timerLabel);
+
+        Button guessButton = createGuessButton();
+
+        VBox topLayout = new VBox(20);
+        topLayout.getChildren().addAll(timerLabel, wordLabel, hintLabel, canvas, scoreLabel, rankLabel, messageLabel);
+        topLayout.setAlignment(Pos.CENTER);
+
+        HBox bottomLayout = new HBox(20);
+        bottomLayout.setAlignment(Pos.CENTER);
+        bottomLayout.getChildren().addAll(guessInput, guessButton);
+
+        StackPane root = new StackPane(layout);
+        root.setStyle("-fx-background-color: #2c3e50;");
+
+        layout.setTop(topLayout);
+        layout.setBottom(bottomLayout);
+
+        Scene gameScene = new Scene(root, 800, 600); // Increased window size
+        primaryStage.setScene(gameScene);
+
+        currentUsername = "Player";
+        initializeGameState();
+        gameTimer.startTimer();
+    }
+
+    private void initializeLabels() {
+        wordLabel = new Label();
+        wordLabel.setFont(Font.font("Arial", FontWeight.BOLD, 24));
+        wordLabel.setTextFill(Color.WHITE);
+
+        hintLabel = new Label("Hint: ");
+        hintLabel.setFont(Font.font("Arial", FontWeight.NORMAL, 14));
+        hintLabel.setTextFill(Color.YELLOW);
+
+        guessInput = new TextField();
+        guessInput.setPromptText("Enter a letter");
+        guessInput.setFont(Font.font("Arial", FontWeight.NORMAL, 14));
+        guessInput.setStyle("-fx-background-radius: 10; -fx-padding: 10;");
+
+        messageLabel = new Label();
+        messageLabel.setFont(Font.font("Arial", FontWeight.NORMAL, 14));
+        messageLabel.setTextFill(Color.RED);
+
+        timerLabel = new Label();
+        timerLabel.setFont(Font.font("Arial", FontWeight.BOLD, 24));
+        timerLabel.setTextFill(Color.WHITE);
+
+        scoreLabel = new Label("Score: 0");
+        scoreLabel.setFont(Font.font("Arial", FontWeight.BOLD, 24));
+        scoreLabel.setTextFill(Color.WHITE);
+
+        rankLabel = new Label("Your rank: ");
+        rankLabel.setFont(Font.font("Arial", FontWeight.BOLD, 24));
+        rankLabel.setTextFill(Color.WHITE);
+    }
+
+    private Button createGuessButton() {
+        Button guessButton = new Button("Guess");
+        styleButton(guessButton);
+        guessButton.setOnAction(e->makeGuess());
+        guessInput.setOnKeyPressed(e -> {
+            if (e.getCode() == KeyCode.ENTER) {
+                guessButton.fire();
+            }
+        });
+        return guessButton;
+    }
+
+    private void initializeGameState() {
+        String category = categoryComboBox.getValue();
+        String[] wordsWithHints = Categories.getWordsWithHints(category);
+        Random random = new Random();
+        int index = random.nextInt(wordsWithHints.length);
+        String wordWithHint = wordsWithHints[index];
+        String[] parts = wordWithHint.split(": ");
+        wordToGuess = parts[0].trim();
+        hint = parts[1].trim();
+
+        currentGuess = new char[wordToGuess.length()];
+        for (int i = 0; i < wordToGuess.length(); i++) {
+            currentGuess[i] = '_';
+        }
+        incorrectGuesses = 0;
+        correctGuesses = 0;
+        messageLabel.setText("New word to guess!");
+        wordLabel.setText(getCurrentGuessDisplay());
+        hintLabel.setText("Hint: " + hint);
+        drawHangman();
+        scoreLabel.setText("Score: 0");
+        rankLabel.setText("Your rank: ");
+    }
+
+    private void makeGuess() {
+        String input = guessInput.getText().trim().toLowerCase();
+        guessInput.clear();
+        if (input.length() == 1 && Character.isLetter(input.charAt(0))) {
+            char guessedLetter = input.charAt(0);
+            if (wordToGuess.indexOf(guessedLetter) < 0) {
+                incorrectGuesses++;
+                drawHangman();
+                if (incorrectGuesses >= 10) {
+                    displayGameOver();
+                    return;
+                }
+                messageLabel.setText("Incorrect guess!");
+            }
+            else {
+                updateWordLabel(guessedLetter);
+                if (isWordGuessed()) {
+                    correctGuesses++;
+                    displayEndGameOptions();
+                }
+            }
+        }
+        else {
+            messageLabel.setText("Please enter a single letter.");
+        }
+    }
+
+    private void updateWordLabel(char guessedLetter) {
+        for (int i = 0; i < wordToGuess.length(); i++) {
+            if (wordToGuess.charAt(i) == guessedLetter) {
+                currentGuess[i] = guessedLetter;
+            }
+        }
+        wordLabel.setText(getCurrentGuessDisplay());
+    }
+
+    private boolean isWordGuessed() {
+        for (char c : currentGuess) {
+            if (c == '_') {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private String getCurrentGuessDisplay() {
+        StringBuilder display = new StringBuilder();
+        for (char c : currentGuess) {
+            display.append(c).append(' ');
+        }
+        return display.toString().trim();
+    }
+
+    private void drawHangman() {
+        GraphicsContext gc = canvas.getGraphicsContext2D();
+        gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight()); // Clear canvas
+
+        gc.setStroke(Color.WHITE);
+        gc.setLineWidth(3);
+
+        if (incorrectGuesses >= 1) gc.strokeLine(50, 350, 150, 350); // Base
+        if (incorrectGuesses >= 2) gc.strokeLine(100, 350, 100, 50); // Pole
+        if (incorrectGuesses >= 3) gc.strokeLine(100, 50, 200, 50); // Top beam
+        if (incorrectGuesses >= 4) gc.strokeLine(200, 50, 200, 100); // Rope
+        if (incorrectGuesses >= 5) gc.strokeOval(175, 100, 50, 50); // Head
+        if (incorrectGuesses >= 6) gc.strokeLine(200, 150, 200, 250); // Body
+        if (incorrectGuesses >= 7) gc.strokeLine(200, 175, 150, 200); // Left arm
+        if (incorrectGuesses >= 8) gc.strokeLine(200, 175, 250, 200); // Right arm
+        if (incorrectGuesses >= 9) gc.strokeLine(200, 250, 175, 300); // Left leg
+        if (incorrectGuesses >= 10) gc.strokeLine(200, 250, 225, 300); // Right leg
+    }
+
+    private void displayGameOver() {
+        gameTimer.stopTimer();
+        messageLabel.setText("Game Over! The word was: " + wordToGuess);
+        guessInput.clear();
+        guessInput.setDisable(true);
+
+        int finalScore = calculateScore();
+        scoreLabel.setText("Score: " + finalScore);
+        addScoreAndRank(currentUsername, finalScore);
+
+        Button mainMenuButton = new Button("Main Menu");
+        Button playAgainButton = new Button("Play Again");
+
+        mainMenuButton.setOnAction(e->returnToMainMenu((Stage)mainMenuButton.getScene().getWindow()));
+        playAgainButton.setOnAction(e->resetForNewGame());
+
+        styleButton(mainMenuButton);
+        styleButton(playAgainButton);
+
+        HBox endGameOptions = new HBox(20, mainMenuButton, playAgainButton);
+        endGameOptions.setAlignment(Pos.CENTER);
+
+        layout.setBottom(endGameOptions);
+    }
+
+
+    private void displayEndGameOptions() {
+        gameTimer.stopTimer();
+        messageLabel.setText("You guessed the word! Continue?");
+        guessInput.clear();
+        guessInput.setDisable(true);
+
+        int finalScore = calculateScore();
+        scoreLabel.setText("Score: " + finalScore);
+        addScoreAndRank(currentUsername, finalScore);
+
+        Button mainMenuButton = new Button("Main Menu");
+        Button playAgainButton = new Button("Continue");
+
+        mainMenuButton.setOnAction(e->returnToMainMenu((Stage)mainMenuButton.getScene().getWindow()));
+        playAgainButton.setOnAction(e->resetForNewGame());
+
+        styleButton(mainMenuButton);
+        styleButton(playAgainButton);
+
+        HBox endGameOptions = new HBox(20, mainMenuButton, playAgainButton);
+        endGameOptions.setAlignment(Pos.CENTER);
+
+        layout.setBottom(endGameOptions);
+    }
+
+    private void resetForNewGame() {
+        gameTimer = new GameTimer(timerLabel);
+        guessInput.setDisable(false);
+
+        Button guessButton = new Button("Guess");
+        guessButton.setOnAction(e->makeGuess());
+
+        styleButton(guessButton);
+
+        // Set action for Enter key
+        guessInput.setOnKeyPressed(e -> {
+            if (e.getCode() == KeyCode.ENTER) {
+                guessButton.fire();
+            }
+        });
+
+        HBox bottomLayout = new HBox(20);
+        bottomLayout.setAlignment(Pos.CENTER);
+        bottomLayout.getChildren().addAll(guessInput, guessButton);
+
+        layout.setBottom(bottomLayout);
+
+        initializeGameState();
+        gameTimer.startTimer();
+    }
+
+    private void returnToMainMenu(Stage stage) {
+        MainMenu mainMenu = new MainMenu();
+        try {
+            mainMenu.start(stage);
+        }
+        catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    private void styleButton(Button button) {
+        button.setFont(Font.font("Arial", FontWeight.BOLD, 14));
+        button.setStyle("-fx-background-color: #3498db; -fx-text-fill: white; -fx-background-radius: 10; -fx-padding: 10;");
+        button.setOnMouseEntered(e->button.setStyle("-fx-background-color: #2980b9; -fx-text-fill: white; -fx-background-radius: 10; -fx-padding: 10;"));
+        button.setOnMouseExited(e->button.setStyle("-fx-background-color: #3498db; -fx-text-fill: white; -fx-background-radius: 10; -fx-padding: 10;"));
+    }
+
+    private int calculateScore() {
+        return correctGuesses * 10 - incorrectGuesses;
+    }
+
+    private void addScoreAndRank(String username, int score) {
+        playerScores.add(new PlayerScore(username, score));
+        playerScores.sort((a, b)->b.getScore() - a.getScore());
+        displayRanking(username, score);
+    }
+
+    private void displayRanking(String currentUsername, int currentScore) {
+        int rank = 1;
+        for (PlayerScore score : playerScores) {
+            if (score.getScore() > currentScore) {
+                rank++;
+            }
+        }
+        rankLabel.setText("Your rank: " + rank);
+    }
+
+    public static void main(String[] args) {
+        launch(args);
+    }
+}
+
+class PlayerScore {
+    private String username;
+    private int score;
+    public PlayerScore(String username, int score) {
+        this.username = username;
+        this.score = score;
+    }
+    public String getUsername() {
+        return username;
+    }
+    public int getScore() {
+        return score;
+    }
+    public void setUsername(String username) {
+        this.username = username;
+    }
+    public void setScore(int score) {
+        this.score = score;
+    }
+}
+

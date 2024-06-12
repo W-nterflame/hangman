@@ -1,0 +1,62 @@
+package application;
+
+import javafx.application.Application;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
+import javafx.geometry.Pos;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
+
+public class MainMenu extends Application {
+	@Override
+		public void start(Stage primaryStage) {
+		primaryStage.setTitle("Hangman Game");
+
+		Button startSoloButton = new Button("Play Hangman Solo");
+		Button startPVPButton = new Button("Play Hangman PvP");
+		Button exitButton = new Button("Exit");
+
+		styleButton(startSoloButton);
+		styleButton(startPVPButton);
+		styleButton(exitButton);
+
+		startSoloButton.setOnAction(e->startSoloGame(primaryStage));
+		startPVPButton.setOnAction(e->startPVPGame(primaryStage));
+		exitButton.setOnAction(e->primaryStage.close());
+
+		VBox vbox = new VBox(20);
+		vbox.getChildren().addAll(startSoloButton, startPVPButton, exitButton);
+		vbox.setAlignment(Pos.CENTER);
+
+		StackPane root = new StackPane(vbox);
+		root.setStyle("-fx-background-color: #2c3e50;"); // Background color
+
+		Scene scene = new Scene(root, 400, 400);
+		primaryStage.setScene(scene);
+		primaryStage.show();
+	}
+
+	private void styleButton(Button button) {
+		button.setFont(Font.font("Arial", FontWeight.BOLD, 14));
+		button.setStyle("-fx-background-color: #3498db; -fx-text-fill: white; -fx-background-radius: 10; -fx-padding: 10;");
+		button.setOnMouseEntered(e->button.setStyle("-fx-background-color: #2980b9; -fx-text-fill: white; -fx-background-radius: 10; -fx-padding: 10;"));
+		
+	}
+
+	private void startSoloGame(Stage primaryStage) {
+		SoloHangmanGame soloGame = new SoloHangmanGame();
+		soloGame.start(primaryStage);
+	}
+	
+	private void startPVPGame(Stage primaryStage) {
+		PVPHangmanGame pvpGame = new PVPHangmanGame();
+		pvpGame.start(primaryStage);
+	}
+
+	public static void main(String[] args) {
+		launch(args);
+	}
+}

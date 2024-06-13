@@ -40,7 +40,8 @@ public class SoloHangmanGame extends Application {
     private GameTimer gameTimer;
     private Label timerLabel;
     private Label scoreLabel;
-    private Label rankLabel;
+    private Label highScoreLabel; // Renamed from rankLabel
+    private int highScore; // Track the highest score (number of words guessed without losing)
     private int roundsCompleted;
     private String currentUsername;
     private List<PlayerRounds> playerRounds = new ArrayList<>();
@@ -60,7 +61,7 @@ public class SoloHangmanGame extends Application {
         categoryComboBox.setValue("Animals"); // Default category
 
         Button startButton = new Button("Start Game");
-        startButton.setOnAction(e->startGame(primaryStage));
+        startButton.setOnAction(e -> startGame(primaryStage));
         styleButton(startButton);
 
         menuLayout.getChildren().addAll(categoryComboBox, startButton);
@@ -79,7 +80,7 @@ public class SoloHangmanGame extends Application {
         Button guessButton = createGuessButton();
 
         VBox topLayout = new VBox(20);
-        topLayout.getChildren().addAll(timerLabel, wordLabel, hintLabel, canvas, scoreLabel, rankLabel, messageLabel);
+        topLayout.getChildren().addAll(timerLabel, wordLabel, hintLabel, canvas, scoreLabel, highScoreLabel, messageLabel);
         topLayout.setAlignment(Pos.CENTER);
 
         HBox bottomLayout = new HBox(20);
@@ -97,6 +98,7 @@ public class SoloHangmanGame extends Application {
 
         currentUsername = "Player";
         roundsCompleted = 0;
+        highScore = 0; // Initialize high score
         initializeGameState();
         gameTimer.startTimer();
     }
@@ -127,15 +129,15 @@ public class SoloHangmanGame extends Application {
         scoreLabel.setFont(Font.font("Arial", FontWeight.BOLD, 24));
         scoreLabel.setTextFill(Color.WHITE);
 
-        rankLabel = new Label("Your rank: ");
-        rankLabel.setFont(Font.font("Arial", FontWeight.BOLD, 24));
-        rankLabel.setTextFill(Color.WHITE);
+        highScoreLabel = new Label("High Score: 0"); // Renamed from rankLabel
+        highScoreLabel.setFont(Font.font("Arial", FontWeight.BOLD, 24));
+        highScoreLabel.setTextFill(Color.WHITE);
     }
 
     private Button createGuessButton() {
         Button guessButton = new Button("Guess");
         styleButton(guessButton);
-        guessButton.setOnAction(e->makeGuess());
+        guessButton.setOnAction(e -> makeGuess());
         guessInput.setOnKeyPressed(e -> {
             if (e.getCode() == KeyCode.ENTER) {
                 guessButton.fire();
@@ -164,7 +166,7 @@ public class SoloHangmanGame extends Application {
         hintLabel.setText("Hint: " + hint);
         drawHangman();
         scoreLabel.setText("Rounds Completed: " + roundsCompleted);
-        rankLabel.setText("Your rank: ");
+        highScoreLabel.setText("High Score: " + highScore); // Update high score display
     }
 
     private void makeGuess() {
@@ -180,16 +182,15 @@ public class SoloHangmanGame extends Application {
                     return;
                 }
                 messageLabel.setText("Incorrect guess!");
-            }
-            else {
+            } else {
                 updateWordLabel(guessedLetter);
                 if (isWordGuessed()) {
                     roundsCompleted++;
+                    highScore = Math.max(highScore, roundsCompleted); // Update high score
                     displayEndGameOptions();
                 }
             }
-        }
-        else {
+        } else {
             messageLabel.setText("Please enter a single letter.");
         }
     }
@@ -270,13 +271,13 @@ public class SoloHangmanGame extends Application {
         guessInput.clear();
         guessInput.setDisable(true);
 
-        addRoundsAndRank(currentUsername, roundsCompleted);
+        addRoundsAndHighScore(currentUsername, roundsCompleted);
 
         Button mainMenuButton = new Button("Main Menu");
         Button playAgainButton = new Button("Play Again");
 
-        mainMenuButton.setOnAction(e->returnToMainMenu((Stage)mainMenuButton.getScene().getWindow()));
-        playAgainButton.setOnAction(e->resetForNewGame());
+        mainMenuButton.setOnAction(e -> returnToMainMenu((Stage) mainMenuButton.getScene().getWindow()));
+        playAgainButton.setOnAction(e -> resetForNewGame());
 
         styleButton(mainMenuButton);
         styleButton(playAgainButton);
@@ -293,18 +294,18 @@ public class SoloHangmanGame extends Application {
         guessInput.clear();
         guessInput.setDisable(true);
 
-        addRoundsAndRank(currentUsername, roundsCompleted);
+        addRoundsAndHighScore(currentUsername, roundsCompleted);
 
         Button mainMenuButton = new Button("Main Menu");
-        Button playAgainButton = new Button("Continue");
+        Button continueButton = new Button("Continue");
 
-        mainMenuButton.setOnAction(e->returnToMainMenu((Stage)mainMenuButton.getScene().getWindow()));
-        playAgainButton.setOnAction(e->resetForNextRound());
+        mainMenuButton.setOnAction(e -> returnToMainMenu((Stage) mainMenuButton.getScene().getWindow()));
+        continueButton.setOnAction(e -> resetForNextRound());
 
         styleButton(mainMenuButton);
-        styleButton(playAgainButton);
+        styleButton(continueButton);
 
-        HBox endGameOptions = new HBox(20, mainMenuButton, playAgainButton);
+        HBox endGameOptions = new HBox(20, mainMenuButton, continueButton);
         endGameOptions.setAlignment(Pos.CENTER);
 
         layout.setBottom(endGameOptions);
@@ -314,7 +315,7 @@ public class SoloHangmanGame extends Application {
         guessInput.setDisable(false);
 
         Button guessButton = new Button("Guess");
-        guessButton.setOnAction(e->makeGuess());
+        guessButton.setOnAction(e -> makeGuess());
 
         styleButton(guessButton);
 
@@ -342,7 +343,7 @@ public class SoloHangmanGame extends Application {
         guessInput.setDisable(false);
 
         Button guessButton = new Button("Guess");
-        guessButton.setOnAction(e->makeGuess());
+        guessButton.setOnAction(e -> makeGuess());
 
         styleButton(guessButton);
 
@@ -372,8 +373,7 @@ public class SoloHangmanGame extends Application {
         MainMenu mainMenu = new MainMenu();
         try {
             mainMenu.start(stage);
-        }
-        catch (Exception ex) {
+        } catch (Exception ex) {
             ex.printStackTrace();
         }
     }
@@ -381,24 +381,24 @@ public class SoloHangmanGame extends Application {
     private void styleButton(Button button) {
         button.setFont(Font.font("Arial", FontWeight.BOLD, 14));
         button.setStyle("-fx-background-color: #3498db; -fx-text-fill: white; -fx-background-radius: 10; -fx-padding: 10;");
-        button.setOnMouseEntered(e->button.setStyle("-fx-background-color: #2980b9; -fx-text-fill: white; -fx-background-radius: 10; -fx-padding: 10;"));
-        button.setOnMouseExited(e->button.setStyle("-fx-background-color: #3498db; -fx-text-fill: white; -fx-background-radius: 10; -fx-padding: 10;"));
+        button.setOnMouseEntered(e -> button.setStyle("-fx-background-color: #2980b9; -fx-text-fill: white; -fx-background-radius: 10; -fx-padding: 10;"));
+        button.setOnMouseExited(e -> button.setStyle("-fx-background-color: #3498db; -fx-text-fill: white; -fx-background-radius: 10; -fx-padding: 10;"));
     }
 
-    private void addRoundsAndRank(String username, int rounds) {
+    private void addRoundsAndHighScore(String username, int rounds) {
         playerRounds.add(new PlayerRounds(username, rounds));
-        playerRounds.sort((a, b)->b.getRounds() - a.getRounds());
-        displayRanking(username, rounds);
+        playerRounds.sort((a, b) -> b.getRounds() - a.getRounds());
+        displayHighScore(username, rounds);
     }
 
-    private void displayRanking(String currentUsername, int currentRounds) {
-        int rank = 1;
+    private void displayHighScore(String currentUsername, int currentRounds) {
+        int highScore = 0;
         for (PlayerRounds rounds : playerRounds) {
             if (rounds.getRounds() > currentRounds) {
-                rank++;
+                highScore++;
             }
         }
-        rankLabel.setText("Your rank: " + rank);
+        highScoreLabel.setText("Your high score: " + highScore);
     }
 
     public static void main(String[] args) {
@@ -409,20 +409,26 @@ public class SoloHangmanGame extends Application {
 class PlayerRounds {
     private String username;
     private int rounds;
+
     public PlayerRounds(String username, int rounds) {
         this.username = username;
         this.rounds = rounds;
     }
+
     public String getUsername() {
         return username;
     }
+
     public int getRounds() {
         return rounds;
     }
+
     public void setUsername(String username) {
         this.username = username;
     }
+
     public void setRounds(int rounds) {
         this.rounds = rounds;
     }
 }
+

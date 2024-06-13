@@ -10,7 +10,7 @@ import javafx.util.Duration;
 public class GameTimer {
     private Timeline timeline;
     private long startTime;
-    private long elapsedTime;
+    private long totalElapsedTime;  // Total elapsed time across all rounds
     private Label timerLabel;
     private Runnable timeUpCallback;
     private long duration;
@@ -19,7 +19,7 @@ public class GameTimer {
         this.timerLabel = timerLabel;
         this.timeUpCallback = timeUpCallback;
         this.duration = duration;
-        this.elapsedTime = 0;
+        this.totalElapsedTime = 0;
     }
 
     public void startTimer() {
@@ -31,8 +31,11 @@ public class GameTimer {
         timeline = new Timeline(new KeyFrame(Duration.seconds(1), new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                elapsedTime = System.currentTimeMillis() - startTime;
-                if (elapsedTime >= duration) {
+                long currentTime = System.currentTimeMillis();
+                totalElapsedTime += currentTime - startTime;
+                startTime = currentTime;
+
+                if (totalElapsedTime >= duration) {
                     stopTimer();
                     timeUpCallback.run();
                 }
@@ -46,13 +49,14 @@ public class GameTimer {
     public void pauseTimer() {
         if (timeline != null) {
             timeline.pause();
-            elapsedTime = System.currentTimeMillis() - startTime;
+            long currentTime = System.currentTimeMillis();
+            totalElapsedTime += currentTime - startTime;
         }
     }
 
     public void resumeTimer() {
         if (timeline != null) {
-            startTime = System.currentTimeMillis() - elapsedTime;
+            startTime = System.currentTimeMillis();
             timeline.play();
         }
     }
@@ -60,12 +64,13 @@ public class GameTimer {
     public void stopTimer() {
         if (timeline != null) {
             timeline.stop();
-            elapsedTime = System.currentTimeMillis() - startTime;
+            long currentTime = System.currentTimeMillis();
+            totalElapsedTime += currentTime - startTime;
         }
     }
 
     private void updateGameTime() {
-        long remainingTime = duration - elapsedTime;
+        long remainingTime = duration - totalElapsedTime;
         if (remainingTime < 0) {
             remainingTime = 0;
         }
@@ -75,8 +80,8 @@ public class GameTimer {
         timerLabel.setText(String.format("%02d:%02d", minutes, seconds));
     }
 
-    public long getElapsedTime() {
-        return elapsedTime;
+    public long getTotalElapsedTime() {
+        return totalElapsedTime;
     }
 
     public long getDuration() {

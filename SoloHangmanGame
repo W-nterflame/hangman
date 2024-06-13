@@ -46,7 +46,7 @@ public class SoloHangmanGame extends Application {
     private String currentUsername;
     private List<PlayerRounds> playerRounds = new ArrayList<>();
 
-    private static final long ROUND_DURATION = 240000; // 2 minutes in milliseconds
+    private static final long ROUND_DURATION = 120000; // 2 minutes in milliseconds
 
     @Override
     public void start(Stage primaryStage) {
@@ -333,7 +333,7 @@ public class SoloHangmanGame extends Application {
         layout.setBottom(bottomLayout);
 
         initializeGameState();
-        gameTimer = new GameTimer(timerLabel, this::timeUp, ROUND_DURATION);
+        // gameTimer = new GameTimer(timerLabel, this::timeUp, ROUND_DURATION);
         gameTimer.startTimer();
     }
 

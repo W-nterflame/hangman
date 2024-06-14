@@ -16,7 +16,7 @@ public class aboutMenu extends Application {
         primaryStage.setTitle("About Hangman Game");
 
         // Credits text
-        Text creditsText = new Text("Hangman Game\n\nDeveloped by:\n- Developer 1\n- Developer 2\n- Developer 3");
+        Text creditsText = new Text("Hangman Game\n\nDeveloped by:\n- Developer 1\n- Developer 2\n- Developer 3\n- Developer 4");
         creditsText.setStyle("-fx-font-size: 16px; -fx-text-alignment: center; -fx-fill: white; -fx-font-weight: bold;");
 
         // Back button to return to the main menu
@@ -33,7 +33,7 @@ public class aboutMenu extends Application {
         mainLayout.getStyleClass().add("menu-root");
 
         Scene scene = new Scene(mainLayout, 800, 600);
-        scene.getStylesheets().add(getClass().getResource("mainmenu.css").toExternalForm());
+        scene.getStylesheets().add(getClass().getResource("aboutMenu.css").toExternalForm());
 
         primaryStage.setScene(scene);
         primaryStage.show();

@@ -28,20 +28,17 @@ public class aboutMenu extends Application {
         StackPane creditsPane = new StackPane(creditsText);
         creditsPane.setPrefSize(800, 600);
 
-        // Animate the credits text to scroll upwards
         TranslateTransition scrollCredits = new TranslateTransition(Duration.seconds(10), creditsText);
-        scrollCredits.setFromY(creditsPane.getHeight() / 2 + 100);
-        scrollCredits.setToY(-creditsPane.getHeight() / 2 - 100);
+        scrollCredits.setFromY(creditsPane.getHeight() / 10 + 100);
+        scrollCredits.setToY(-creditsPane.getHeight() / 10 - 100);
         scrollCredits.setCycleCount(TranslateTransition.INDEFINITE);
         scrollCredits.setAutoReverse(true);
         scrollCredits.play();
 
-        // Back button to return to the main menu
         Button backButton = new Button("Back to Main Menu");
         backButton.getStyleClass().add("menu-button");
         backButton.setOnAction(e -> showMainMenu(primaryStage));
 
-        // HBox for bottom left placement
         HBox bottomLeftBox = new HBox();
         bottomLeftBox.getChildren().add(backButton);
         bottomLeftBox.setAlignment(Pos.BOTTOM_LEFT);

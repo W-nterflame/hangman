@@ -10,8 +10,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.scene.control.Button;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
 
 public class MainMenu extends Application {
 
@@ -27,18 +25,21 @@ public class MainMenu extends Application {
         // Buttons setup
         Button startSoloButton = new Button("Play Solo");
         Button startPVPButton = new Button("Play PvP");
+        Button aboutButton = new Button("About");
         Button exitButton = new Button("Exit");
 
         startSoloButton.getStyleClass().add("menu-button");
         startPVPButton.getStyleClass().add("menu-button");
+        aboutButton.getStyleClass().add("menu-button");
         exitButton.getStyleClass().add("menu-button");
 
         startSoloButton.setOnAction(e -> startSoloGame(primaryStage));
         startPVPButton.setOnAction(e -> startPVPGame(primaryStage));
+        aboutButton.setOnAction(e->aboutMenu(primaryStage));
         exitButton.setOnAction(e -> primaryStage.close());
 
         VBox buttonBox = new VBox(20);
-        buttonBox.getChildren().addAll(startSoloButton, startPVPButton, exitButton);
+        buttonBox.getChildren().addAll(startSoloButton, startPVPButton, aboutButton, exitButton);
         buttonBox.setAlignment(Pos.CENTER);
 
         // Main layout
@@ -72,6 +73,11 @@ public class MainMenu extends Application {
     private void startPVPGame(Stage primaryStage) {
         PVPHangmanGame pvpGame = new PVPHangmanGame();
         pvpGame.start(primaryStage);
+    }
+    
+    private void aboutMenu(Stage primaryStage) {
+    	aboutMenu about = new aboutMenu();
+    	about.start(primaryStage);
     }
 
     public static void main(String[] args) {

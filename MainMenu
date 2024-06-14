@@ -51,7 +51,7 @@ public class MainMenu extends Application {
 
         // Scene setup
         Scene scene = new Scene(mainLayout, 800, 600); // Horizontal rectangle shape
-        scene.getStylesheets().add(getClass().getResource("mainmenu.css").toExternalForm());
+        scene.getStylesheets().add(getClass().getResource("mainMenu.css").toExternalForm());
 
         primaryStage.setScene(scene);
         primaryStage.show();

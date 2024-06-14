@@ -18,23 +18,30 @@ public class aboutMenu extends Application {
     public void start(Stage primaryStage) {
         primaryStage.setTitle("About Hangman Game");
 
-        Text creditsText = new Text("Hangman Game\n\nDeveloped by:\n- Developer 1\n- Developer 2\n- Developer 3\n- Developer 4");
-        creditsText.getStyleClass().add("credits-text");
+        // Credits text
+        Text creditsText = new Text("Hangman Game\n\nDeveloped by:\nCST2209178\tZhang Siyu\r\n"
+        		+ "CST2209199\tWinata Bryan\r\n"
+        		+ "CST2209196\tLie Kevin Nice\r\n"
+        		+ "CST2209656\tAarene Chin Chia Mei");
+        creditsText.setStyle("-fx-font-size: 22px; -fx-font-family: 'Century Gothic'; -fx-font-weight: bold; -fx-fill: white; -fx-text-alignment: center;");
 
         StackPane creditsPane = new StackPane(creditsText);
         creditsPane.setPrefSize(800, 600);
 
+        // Animate the credits text to scroll upwards
         TranslateTransition scrollCredits = new TranslateTransition(Duration.seconds(10), creditsText);
         scrollCredits.setFromY(creditsPane.getHeight() / 2 + 100);
         scrollCredits.setToY(-creditsPane.getHeight() / 2 - 100);
         scrollCredits.setCycleCount(TranslateTransition.INDEFINITE);
-        scrollCredits.setAutoReverse(false);
+        scrollCredits.setAutoReverse(true);
         scrollCredits.play();
 
+        // Back button to return to the main menu
         Button backButton = new Button("Back to Main Menu");
         backButton.getStyleClass().add("menu-button");
         backButton.setOnAction(e -> showMainMenu(primaryStage));
 
+        // HBox for bottom left placement
         HBox bottomLeftBox = new HBox();
         bottomLeftBox.getChildren().add(backButton);
         bottomLeftBox.setAlignment(Pos.BOTTOM_LEFT);

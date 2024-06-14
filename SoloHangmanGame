@@ -305,7 +305,7 @@ public class SoloHangmanGame extends Application {
         styleButton(mainMenuButton);
         styleButton(continueButton);
 
-        HBox endGameOptions = new HBox(20, mainMenuButton, continueButton);
+        HBox endGameOptions = new HBox(20, continueButton, mainMenuButton);
         endGameOptions.setAlignment(Pos.CENTER);
 
         layout.setBottom(endGameOptions);
@@ -431,4 +431,3 @@ class PlayerRounds {
         this.rounds = rounds;
     }
 }
-

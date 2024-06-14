@@ -267,6 +267,7 @@ public class SoloHangmanGame extends Application {
     }
 
     private void displayGameOver() {
+    	gameTimer.stopTimer();
         messageLabel.setText("Game Over! The word was: " + wordToGuess);
         guessInput.clear();
         guessInput.setDisable(true);
@@ -286,6 +287,7 @@ public class SoloHangmanGame extends Application {
         endGameOptions.setAlignment(Pos.CENTER);
 
         layout.setBottom(endGameOptions);
+        
     }
 
     private void displayEndGameOptions() {

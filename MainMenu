@@ -1,62 +1,80 @@
 package application;
 
 import javafx.application.Application;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.layout.StackPane;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import javafx.geometry.Pos;
+import javafx.scene.control.Button;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 
 public class MainMenu extends Application {
-	@Override
-		public void start(Stage primaryStage) {
-		primaryStage.setTitle("Hangman Game");
 
-		Button startSoloButton = new Button("Play Hangman Solo");
-		Button startPVPButton = new Button("Play Hangman PvP");
-		Button exitButton = new Button("Exit");
+    @Override
+    public void start(Stage primaryStage) {
+        primaryStage.setTitle("Hangman Game");
 
-		styleButton(startSoloButton);
-		styleButton(startPVPButton);
-		styleButton(exitButton);
+        // Logo setup
+        ImageView logoImageView = createLogoImageView();
+        HBox logoBox = new HBox(logoImageView);
+        logoBox.setAlignment(Pos.CENTER);
 
-		startSoloButton.setOnAction(e->startSoloGame(primaryStage));
-		startPVPButton.setOnAction(e->startPVPGame(primaryStage));
-		exitButton.setOnAction(e->primaryStage.close());
+        // Buttons setup
+        Button startSoloButton = new Button("Play Solo");
+        Button startPVPButton = new Button("Play PvP");
+        Button exitButton = new Button("Exit");
 
-		VBox vbox = new VBox(20);
-		vbox.getChildren().addAll(startSoloButton, startPVPButton, exitButton);
-		vbox.setAlignment(Pos.CENTER);
+        startSoloButton.getStyleClass().add("menu-button");
+        startPVPButton.getStyleClass().add("menu-button");
+        exitButton.getStyleClass().add("menu-button");
 
-		StackPane root = new StackPane(vbox);
-		root.setStyle("-fx-background-color: #2c3e50;"); // Background color
+        startSoloButton.setOnAction(e -> startSoloGame(primaryStage));
+        startPVPButton.setOnAction(e -> startPVPGame(primaryStage));
+        exitButton.setOnAction(e -> primaryStage.close());
 
-		Scene scene = new Scene(root, 400, 400);
-		primaryStage.setScene(scene);
-		primaryStage.show();
-	}
+        VBox buttonBox = new VBox(20);
+        buttonBox.getChildren().addAll(startSoloButton, startPVPButton, exitButton);
+        buttonBox.setAlignment(Pos.CENTER);
 
-	private void styleButton(Button button) {
-		button.setFont(Font.font("Arial", FontWeight.BOLD, 14));
-		button.setStyle("-fx-background-color: #3498db; -fx-text-fill: white; -fx-background-radius: 10; -fx-padding: 10;");
-		button.setOnMouseEntered(e->button.setStyle("-fx-background-color: #2980b9; -fx-text-fill: white; -fx-background-radius: 10; -fx-padding: 10;"));
-		
-	}
+        // Main layout
+        BorderPane mainLayout = new BorderPane();
+        mainLayout.setTop(logoBox);
+        mainLayout.setCenter(buttonBox);
 
-	private void startSoloGame(Stage primaryStage) {
-		SoloHangmanGame soloGame = new SoloHangmanGame();
-		soloGame.start(primaryStage);
-	}
-	
-	private void startPVPGame(Stage primaryStage) {
-		PVPHangmanGame pvpGame = new PVPHangmanGame();
-		pvpGame.start(primaryStage);
-	}
+        mainLayout.getStyleClass().add("menu-root"); // Add the style class for the root
 
-	public static void main(String[] args) {
-		launch(args);
-	}
+        // Scene setup
+        Scene scene = new Scene(mainLayout, 800, 600); // Horizontal rectangle shape
+        scene.getStylesheets().add(getClass().getResource("mainmenu.css").toExternalForm());
+
+        primaryStage.setScene(scene);
+        primaryStage.show();
+    }
+
+    private ImageView createLogoImageView() {
+        Image logoImage = new Image(getClass().getResourceAsStream("logo.png"));
+        ImageView logoImageView = new ImageView(logoImage);
+        logoImageView.setFitWidth(500); // Adjust width as needed
+        logoImageView.setPreserveRatio(true);
+        return logoImageView;
+    }
+
+    private void startSoloGame(Stage primaryStage) {
+        SoloHangmanGame soloGame = new SoloHangmanGame();
+        soloGame.start(primaryStage);
+    }
+
+    private void startPVPGame(Stage primaryStage) {
+        PVPHangmanGame pvpGame = new PVPHangmanGame();
+        pvpGame.start(primaryStage);
+    }
+
+    public static void main(String[] args) {
+        launch(args);
+    }
 }

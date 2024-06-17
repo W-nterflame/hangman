@@ -16,3 +16,38 @@
 .scene {
     -fx-background-color: transparent;
 }
+
+.styled-button {
+    -fx-font-weight: bold;
+    -fx-background-color: #a8be9a;
+    -fx-text-fill: white;
+    -fx-background-radius: 10;
+    -fx-padding: 10;
+}
+
+.styled-button:hover {
+    -fx-background-color: #7a8b70;
+}
+
+/* this part for text box */
+
+.styled-text-field {
+    -fx-font-size: 14px;
+    -fx-font-weight: normal;
+    -fx-background-color: #ecf0f1;
+    -fx-background-radius: 10;
+    -fx-border-color: #bdc3c7;
+    -fx-border-radius: 10;
+    -fx-padding: 8px;
+}
+
+.styled-text-field:hover {
+    -fx-background-color: #d5dbdb;
+}
+
+.styled-text-field:focused {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #3498db;
+}
+
+

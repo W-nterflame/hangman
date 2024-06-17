@@ -1,7 +1,7 @@
 package application;
 
 import javafx.application.Application;
-import javafx.geometry.Insets;
+
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
@@ -41,8 +41,8 @@ public class SoloHangmanGame extends Application {
     private GameTimer gameTimer;
     private Label timerLabel;
     private Label scoreLabel;
-    private Label highScoreLabel;
-    private int highScore;
+    private Label highScoreLabel; // Renamed from rankLabel
+    private int highScore; // Track the highest score (number of words guessed without losing)
     private int roundsCompleted;
     private String currentUsername;
     private List<PlayerRounds> playerRounds = new ArrayList<>();
@@ -53,12 +53,13 @@ public class SoloHangmanGame extends Application {
     public void start(Stage primaryStage) {
         primaryStage.setTitle("Hangman Game");
 
+        // Create main layout for the main menu
         VBox menuLayout = new VBox(20);
         menuLayout.setAlignment(Pos.CENTER);
 
         categoryComboBox = new ComboBox<>();
         categoryComboBox.getItems().addAll(Categories.getCategories());
-        categoryComboBox.setValue("Animals");
+        categoryComboBox.setValue("Animals"); // Default category
 
         Button startButton = new Button("Start Game");
         startButton.setOnAction(e -> startGame(primaryStage));
@@ -66,13 +67,17 @@ public class SoloHangmanGame extends Application {
 
         menuLayout.getChildren().addAll(categoryComboBox, startButton);
         Scene menuScene = new Scene(menuLayout, 600, 600);
+        menuScene.getStylesheets().add(getClass().getResource("soloGame.css").toExternalForm());
+
         primaryStage.setScene(menuScene);
         primaryStage.show();
     }
 
     private void startGame(Stage primaryStage) {
         layout = new BorderPane();
-        canvas = new Canvas(300, 300);
+        layout.setStyle("-fx-background-color: transparent;"); // Ensure transparent background
+
+        canvas = new Canvas(300, 300);  // Set canvas size
 
         initializeLabels();
         gameTimer = new GameTimer(timerLabel, this::timeUp, ROUND_DURATION);
@@ -88,31 +93,26 @@ public class SoloHangmanGame extends Application {
         bottomLayout.getChildren().addAll(guessInput, guessButton);
 
         StackPane root = new StackPane(layout);
-        root.setStyle("-fx-background-color: #2c3e50;");
+        root.setStyle("-fx-background-color: transparent;"); // Ensure transparent background
 
         layout.setTop(topLayout);
         layout.setBottom(bottomLayout);
 
-        Scene scene = new Scene(root, 800, 600);
-        scene.getStylesheets().add(getClass().getResource("soloGame.css").toExternalForm());
-        primaryStage.setScene(scene);
-
-        Label titleLabel = new Label("Solo Mode");
-        titleLabel.getStyleClass().add("title-label");
-        VBox vbox = new VBox(titleLabel);
-        vbox.setPadding(new Insets(20));
-        root.getChildren().add(vbox);
+        Scene gameScene = new Scene(root, 800, 600); // Increased window size
+        gameScene.getStylesheets().add(getClass().getResource("soloGame.css").toExternalForm()); // Apply CSS
+        primaryStage.setScene(gameScene);
 
         currentUsername = "Player";
         roundsCompleted = 0;
-        highScore = 0;
+        highScore = 0; // Initialize high score
         initializeGameState();
         gameTimer.startTimer();
     }
 
     private void initializeLabels() {
     	
-    	Color hint = Color.web("#809572");
+    	Color hintColor = Color.web("#809572");
+    	Color timerColor = Color.web("#203c11");
     	
         wordLabel = new Label();
         wordLabel.setFont(Font.font("Arial", FontWeight.BOLD, 24));
@@ -120,7 +120,7 @@ public class SoloHangmanGame extends Application {
 
         hintLabel = new Label("Hint: ");
         hintLabel.setFont(Font.font("Arial", FontWeight.NORMAL, 14));
-        hintLabel.setTextFill(hint);
+        hintLabel.setTextFill(hintColor);
 
         guessInput = new TextField();
         guessInput.setPromptText("Enter a letter");
@@ -133,13 +133,13 @@ public class SoloHangmanGame extends Application {
 
         timerLabel = new Label();
         timerLabel.setFont(Font.font("Arial", FontWeight.BOLD, 24));
-        timerLabel.setTextFill(Color.WHITE);
+        timerLabel.setTextFill(timerColor);
 
         scoreLabel = new Label("Rounds Completed: 0");
         scoreLabel.setFont(Font.font("Arial", FontWeight.BOLD, 24));
         scoreLabel.setTextFill(Color.WHITE);
 
-        highScoreLabel = new Label("High Score: 0");
+        highScoreLabel = new Label("High Score: 0"); // Renamed from rankLabel
         highScoreLabel.setFont(Font.font("Arial", FontWeight.BOLD, 24));
         highScoreLabel.setTextFill(Color.WHITE);
     }
@@ -176,7 +176,7 @@ public class SoloHangmanGame extends Application {
         hintLabel.setText("Hint: " + hint);
         drawHangman();
         scoreLabel.setText("Rounds Completed: " + roundsCompleted);
-        highScoreLabel.setText("High Score: " + highScore);
+        highScoreLabel.setText("High Score: " + highScore); // Update high score display
     }
 
     private void makeGuess() {
@@ -196,7 +196,7 @@ public class SoloHangmanGame extends Application {
                 updateWordLabel(guessedLetter);
                 if (isWordGuessed()) {
                     roundsCompleted++;
-                    highScore = Math.max(highScore, roundsCompleted);
+                    highScore = Math.max(highScore, roundsCompleted); // Update high score
                     displayEndGameOptions();
                 }
             }
@@ -237,7 +237,6 @@ public class SoloHangmanGame extends Application {
         gc.setFill(Color.WHITE);
         gc.setLineWidth(2.0);
         gc.setStroke(Color.web("#203c11"));
-
         gc.strokeLine(50, 250, 150, 250);
 
         if (incorrectGuesses > 0) gc.strokeLine(100, 50, 100, 250);
@@ -278,6 +277,7 @@ public class SoloHangmanGame extends Application {
         endGameOptions.setAlignment(Pos.CENTER);
 
         layout.setBottom(endGameOptions);
+
     }
 
     private void displayEndGameOptions() {
@@ -311,6 +311,7 @@ public class SoloHangmanGame extends Application {
 
         styleButton(guessButton);
 
+        // Set action for Enter key
         guessInput.setOnKeyPressed(e -> {
             if (e.getCode() == KeyCode.ENTER) {
                 guessButton.fire();
@@ -337,6 +338,7 @@ public class SoloHangmanGame extends Application {
 
         styleButton(guessButton);
 
+        // Set action for Enter key
         guessInput.setOnKeyPressed(e -> {
             if (e.getCode() == KeyCode.ENTER) {
                 guessButton.fire();

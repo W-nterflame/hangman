@@ -98,7 +98,7 @@ public class SoloHangmanGame extends Application {
         layout.setTop(topLayout);
         layout.setBottom(bottomLayout);
 
-        Scene gameScene = new Scene(root, 800, 600); // Increased window size
+        Scene gameScene = new Scene(root, 800, 620); // Increased window size
         gameScene.getStylesheets().add(getClass().getResource("soloGame.css").toExternalForm()); // Apply CSS
         primaryStage.setScene(gameScene);
 
@@ -112,11 +112,14 @@ public class SoloHangmanGame extends Application {
     private void initializeLabels() {
     	
     	Color hintColor = Color.web("#809572");
-    	Color timerColor = Color.web("#203c11");
+    	Color timerColor = Color.web("#488826");
+    	Color wordColor = Color.web("#488826");
+    	Color messageColor = Color.web("#FF0000");
+    	Color scoreColor = Color.web("#FFFFFF");
     	
         wordLabel = new Label();
-        wordLabel.setFont(Font.font("Arial", FontWeight.BOLD, 24));
-        wordLabel.setTextFill(Color.WHITE);
+        wordLabel.setFont(Font.font("Arial", FontWeight.BLACK, 24));
+        wordLabel.setTextFill(wordColor);
 
         hintLabel = new Label("Hint: ");
         hintLabel.setFont(Font.font("Arial", FontWeight.NORMAL, 14));
@@ -124,12 +127,11 @@ public class SoloHangmanGame extends Application {
 
         guessInput = new TextField();
         guessInput.setPromptText("Enter a letter");
-        guessInput.setFont(Font.font("Arial", FontWeight.NORMAL, 14));
-        guessInput.setStyle("-fx-background-radius: 10; -fx-padding: 10;");
+        guessInput.getStyleClass().add("styled-text-field");
 
         messageLabel = new Label();
-        messageLabel.setFont(Font.font("Arial", FontWeight.NORMAL, 14));
-        messageLabel.setTextFill(Color.RED);
+        messageLabel.setFont(Font.font("Arial", FontWeight.BOLD, 14));
+        messageLabel.setTextFill(messageColor);
 
         timerLabel = new Label();
         timerLabel.setFont(Font.font("Arial", FontWeight.BOLD, 24));
@@ -137,11 +139,11 @@ public class SoloHangmanGame extends Application {
 
         scoreLabel = new Label("Rounds Completed: 0");
         scoreLabel.setFont(Font.font("Arial", FontWeight.BOLD, 24));
-        scoreLabel.setTextFill(Color.WHITE);
+        scoreLabel.setTextFill(scoreColor);
 
         highScoreLabel = new Label("High Score: 0"); // Renamed from rankLabel
         highScoreLabel.setFont(Font.font("Arial", FontWeight.BOLD, 24));
-        highScoreLabel.setTextFill(Color.WHITE);
+        highScoreLabel.setTextFill(scoreColor);
     }
 
     private Button createGuessButton() {
@@ -370,11 +372,12 @@ public class SoloHangmanGame extends Application {
     }
 
     private void styleButton(Button button) {
-        button.setFont(Font.font("Arial", FontWeight.BOLD, 14));
-        button.setStyle("-fx-background-color: #3498db; -fx-text-fill: white; -fx-background-radius: 10; -fx-padding: 10;");
-        button.setOnMouseEntered(e -> button.setStyle("-fx-background-color: #2980b9; -fx-text-fill: white; -fx-background-radius: 10; -fx-padding: 10;"));
-        button.setOnMouseExited(e -> button.setStyle("-fx-background-color: #3498db; -fx-text-fill: white; -fx-background-radius: 10; -fx-padding: 10;"));
+        button.getStyleClass().add("styled-button");
+
+        button.setOnMouseEntered(e -> button.getStyleClass().add("styled-button-hover"));
+        button.setOnMouseExited(e -> button.getStyleClass().remove("styled-button-hover"));
     }
+
 
     private void addRoundsAndHighScore(String username, int rounds) {
         playerRounds.add(new PlayerRounds(username, rounds));

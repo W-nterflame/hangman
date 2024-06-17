@@ -1,0 +1,18 @@
+.root {
+    -fx-background-image: url('forest_mountains.jpg');
+    -fx-background-size: cover;
+    -fx-background-repeat: no-repeat;
+    -fx-background-position: center;
+}
+ 
+.title-label {
+    -fx-text-fill: white; 
+    -fx-font-size: 36px;
+    -fx-font-family: "Palatino Linotype", sans-serif; 
+    -fx-alignment: center; 
+    -fx-padding: 20px; 
+}
+ 
+.scene {
+    -fx-background-color: transparent;
+}

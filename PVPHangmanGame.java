@@ -1,5 +1,3 @@
-//aaaaaaaaaaaaaaaaaaaaaaaaaa
-
 package application;
 
 import javafx.application.Application;
@@ -62,6 +60,7 @@ public class PVPHangmanGame extends Application {
 
         menuLayout.getChildren().addAll(categoryComboBox, startButton);
         Scene menuScene = new Scene(menuLayout, 600, 600);
+        menuScene.getStylesheets().add(getClass().getResource("pvpGame.css").toExternalForm());
         primaryStage.setScene(menuScene);
         primaryStage.show();
     }
@@ -78,21 +77,23 @@ public class PVPHangmanGame extends Application {
         flipLayout.setStyle("-fx-background-color: #2c3e50;");
         
     	Scene flipScene = new Scene(flipLayout, 600, 600);
-    	Stage flipStage = new Stage();
-    	flipStage.setScene(flipScene);
-    	flipStage.show();
+    	flipScene.getStylesheets().add(getClass().getResource("coinFlip.css").toExternalForm());
+    	primaryStage.setScene(flipScene);
+    	primaryStage.show();
     	
     	Random random = new Random();
     	currentPlayer = random.nextBoolean() ? 1 : 2;
     	
     	Label resultLabel = new Label("Player " + currentPlayer + " will start!");
         resultLabel.setFont(Font.font("Arial", FontWeight.BOLD, 18));
-        resultLabel.setTextFill(Color.YELLOW);
+        
+        Color resultColor = Color.web("#f77600");
+        resultLabel.setTextFill(resultColor);
 
         Button continueButton = new Button("Continue");
         styleButton(continueButton);
         continueButton.setOnAction(e -> {
-        	flipStage.close();
+        	primaryStage.close();
         	startGame(primaryStage);
         });
 
@@ -121,8 +122,10 @@ public class PVPHangmanGame extends Application {
         layout.setTop(topLayout);
         layout.setBottom(bottomLayout);
 
-        Scene scene = new Scene(root, 600, 600);
-        primaryStage.setScene(scene);
+        Scene gameScene = new Scene(root, 800, 700);
+        gameScene.getStylesheets().add(getClass().getResource("pvpGame.css").toExternalForm());
+        primaryStage.setScene(gameScene);
+        primaryStage.setFullScreen(true);
         primaryStage.show();
 
         initializeGameState();
@@ -132,7 +135,7 @@ public class PVPHangmanGame extends Application {
     private void initializeLabels() {
     	 wordLabel = new Label();
          wordLabel.setFont(Font.font("Arial", FontWeight.BOLD, 24));
-         wordLabel.setTextFill(Color.WHITE);
+         wordLabel.setTextFill(Color.BLACK);
 
          hintLabel = new Label("Hint: ");
          hintLabel.setFont(Font.font("Arial", FontWeight.NORMAL, 14));
@@ -140,8 +143,7 @@ public class PVPHangmanGame extends Application {
 
          guessInput = new TextField();
          guessInput.setPromptText("Enter a letter");
-         guessInput.setFont(Font.font("Arial", FontWeight.NORMAL, 14));
-         guessInput.setStyle("-fx-background-radius: 10; -fx-padding: 10;");
+         guessInput.getStyleClass().add("styled-text-field");
 
          messageLabel = new Label("Player " + currentPlayer + " starts!");
          messageLabel.setFont(Font.font("Arial", FontWeight.NORMAL, 14));
@@ -149,7 +151,7 @@ public class PVPHangmanGame extends Application {
 
          roundLabel = new Label("Round: 1");
          roundLabel.setFont(Font.font("Arial", FontWeight.BOLD, 18));
-         roundLabel.setTextFill(Color.WHITE);
+         roundLabel.setTextFill(Color.RED);
 
          scoreLabel = new Label("Player 1 : 0 | Player 2 : 0");
          scoreLabel.setFont(Font.font("Arial", FontWeight.BOLD, 18));
@@ -259,37 +261,17 @@ public class PVPHangmanGame extends Application {
         gc.setFill(Color.WHITE);
         gc.setLineWidth(2.0);
         gc.setStroke(Color.WHITE);
-        // Base of the gallows
         gc.strokeLine(50, 250, 150, 250);
 
-        // Vertical post
         if (incorrectGuesses > 0) gc.strokeLine(100, 50, 100, 250);
-
-        // Horizontal beam
         if (incorrectGuesses > 1) gc.strokeLine(100, 50, 200, 50);
-
-        // Rope
         if (incorrectGuesses > 2) gc.strokeLine(200, 50, 200, 70);
-
-        // Head
         if (incorrectGuesses > 3) gc.strokeOval(180, 70, 40, 40);
-
-        // Body
         if (incorrectGuesses > 4) gc.strokeLine(200, 110, 200, 180);
-
-        // Left arm
         if (incorrectGuesses > 5) gc.strokeLine(200, 130, 170, 100);
-
-        // Right arm
         if (incorrectGuesses > 6) gc.strokeLine(200, 130, 230, 100);
-
-        // Left leg
         if (incorrectGuesses > 7) gc.strokeLine(200, 180, 170, 210);
-
-        // Right leg
         if (incorrectGuesses > 8) gc.strokeLine(200, 180, 230, 210);
-
-        // Eyes
         if (incorrectGuesses > 9) {
             gc.strokeLine(190, 80, 195, 85);
             gc.strokeLine(195, 80, 190, 85);
@@ -384,10 +366,10 @@ public class PVPHangmanGame extends Application {
     }
 
     private void styleButton(Button button) {
-        button.setFont(Font.font("Arial", FontWeight.BOLD, 14));
-        button.setStyle("-fx-background-color: #3498db; -fx-text-fill: white; -fx-background-radius: 10; -fx-padding: 10;");
-        button.setOnMouseEntered(e -> button.setStyle("-fx-background-color: #2980b9; -fx-text-fill: white; -fx-background-radius: 10; -fx-padding: 10;"));
-        button.setOnMouseExited(e -> button.setStyle("-fx-background-color: #3498db; -fx-text-fill: white; -fx-background-radius: 10; -fx-padding: 10;"));
+    	button.getStyleClass().add("styled-button");
+    	
+    	button.setOnMouseEntered(e -> button.getStyleClass().add("styled-button-hover"));
+        button.setOnMouseExited(e -> button.getStyleClass().remove("styled-button-hover"));
     }
 
     public static void main(String[] args) {

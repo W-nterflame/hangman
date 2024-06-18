@@ -1,0 +1,26 @@
+.root {
+    -fx-background-image: url('coin_flip.gif');
+    -fx-background-size: cover;
+    -fx-background-repeat: no-repeat;
+    -fx-background-position: center;
+}
+ 
+.scene {
+    -fx-background-color: transparent;
+}
+
+.styled-button {
+    -fx-font-weight: bold;
+    -fx-background-color: #a8be9a;
+    -fx-text-fill: white;
+    -fx-background-radius: 10;
+    -fx-padding: 10;
+}
+
+.styled-button:hover {
+    -fx-background-color: #7a8b70;
+}
+
+
+
+

@@ -1,7 +1,6 @@
 package application;
 
 import javafx.application.Application;
-
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
@@ -67,11 +66,13 @@ public class SoloHangmanGame extends Application {
         menuLayout.getChildren().addAll(categoryComboBox, startButton);
         Scene menuScene = new Scene(menuLayout, 600, 600);
         menuScene.getStylesheets().add(getClass().getResource("soloGame.css").toExternalForm());
+        
 
         primaryStage.setScene(menuScene);
         primaryStage.show();
     }
 
+    // Starts the game, sets up the game layout, initializes game state, and starts the timer
     private void startGame(Stage primaryStage) {
         layout = new BorderPane();
         layout.setStyle("-fx-background-color: transparent;"); 
@@ -99,6 +100,7 @@ public class SoloHangmanGame extends Application {
         Scene gameScene = new Scene(root, 800, 620); 
         gameScene.getStylesheets().add(getClass().getResource("soloGame.css").toExternalForm()); 
         primaryStage.setScene(gameScene);
+        primaryStage.setFullScreen(true);
 
         currentUsername = "Player";
         roundsCompleted = 0;
@@ -107,6 +109,7 @@ public class SoloHangmanGame extends Application {
         gameTimer.startTimer();
     }
 
+    // Initializes labels used in the game UI
     private void initializeLabels() {
     	
     	Color hintColor = Color.web("#809572");
@@ -144,6 +147,7 @@ public class SoloHangmanGame extends Application {
         highScoreLabel.setTextFill(scoreColor);
     }
 
+    // Creates and styles the guess button and sets its action handler
     private Button createGuessButton() {
         Button guessButton = new Button("Guess");
         styleButton(guessButton);
@@ -156,6 +160,7 @@ public class SoloHangmanGame extends Application {
         return guessButton;
     }
 
+    // Initializes the game state by selecting a word, resetting variables, and updating the display
     private void initializeGameState() {
         String category = categoryComboBox.getValue();
         String[] wordsWithHints = Categories.getWordsWithHints(category);
@@ -179,6 +184,7 @@ public class SoloHangmanGame extends Application {
         highScoreLabel.setText("High Score: " + highScore); 
     }
 
+    // Handles user input for guessing letters, updates game state, and checks for win/loss conditions
     private void makeGuess() {
         String input = guessInput.getText().trim().toLowerCase();
         guessInput.clear();
@@ -205,6 +211,7 @@ public class SoloHangmanGame extends Application {
         }
     }
 
+    // Updates the displayed word with the correctly guessed letter
     private void updateWordLabel(char guessedLetter) {
         for (int i = 0; i < wordToGuess.length(); i++) {
             if (wordToGuess.charAt(i) == guessedLetter) {
@@ -214,6 +221,7 @@ public class SoloHangmanGame extends Application {
         wordLabel.setText(getCurrentGuessDisplay());
     }
 
+    // Checks if the word has been completely guessed
     private boolean isWordGuessed() {
         for (char c : currentGuess) {
             if (c == '_') {
@@ -223,6 +231,7 @@ public class SoloHangmanGame extends Application {
         return true;
     }
 
+    // Returns the current state of the guessed word for display
     private String getCurrentGuessDisplay() {
         StringBuilder display = new StringBuilder();
         for (char c : currentGuess) {
@@ -231,6 +240,7 @@ public class SoloHangmanGame extends Application {
         return display.toString();
     }
 
+    // Draws the hangman figure based on the number of incorrect guesses
     private void drawHangman() {
         GraphicsContext gc = canvas.getGraphicsContext2D();
         gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
@@ -256,6 +266,7 @@ public class SoloHangmanGame extends Application {
         }
     }
 
+    // Displays a game over message when the game is lost
     private void displayGameOver() {
         gameTimer.stopTimer();
         messageLabel.setText("Game Over! The word was: " + wordToGuess);
@@ -280,6 +291,7 @@ public class SoloHangmanGame extends Application {
 
     }
 
+    // Displays options to restart or exit the game at the end of a round
     private void displayEndGameOptions() {
         gameTimer.stopTimer();
         messageLabel.setText("You guessed the word! Continue?");
@@ -303,6 +315,7 @@ public class SoloHangmanGame extends Application {
         layout.setBottom(endGameOptions);
     }
 
+    // Resets the game state for the next round
     private void resetForNextRound() {
         guessInput.setDisable(false);
 
@@ -327,6 +340,7 @@ public class SoloHangmanGame extends Application {
         gameTimer.startTimer();
     }
 
+    // Resets the game state for a new game
     private void resetForNewGame() {
         roundsCompleted = 0;
         gameTimer = new GameTimer(timerLabel, this::timeUp, ROUND_DURATION);
@@ -353,11 +367,13 @@ public class SoloHangmanGame extends Application {
         gameTimer.startTimer();
     }
 
+    // Handles the event when the game timer runs out
     private void timeUp() {
         messageLabel.setText("Time's up!");
         displayGameOver();
     }
 
+    // Returns to the main menu
     private void returnToMainMenu(Stage stage) {
         MainMenu mainMenu = new MainMenu();
         try {
@@ -367,6 +383,7 @@ public class SoloHangmanGame extends Application {
         }
     }
 
+    // Applies custom styles to a button
     private void styleButton(Button button) {
         button.getStyleClass().add("styled-button");
 
@@ -374,13 +391,14 @@ public class SoloHangmanGame extends Application {
         button.setOnMouseExited(e -> button.getStyleClass().remove("styled-button-hover"));
     }
 
-
+    // Adds the current round and high score to the player rounds list and sorts it
     private void addRoundsAndHighScore(String username, int rounds) {
         playerRounds.add(new PlayerRounds(username, rounds));
         playerRounds.sort((a, b) -> b.getRounds() - a.getRounds());
         displayHighScore(username, rounds);
     }
 
+    // Displays the high score
     private void displayHighScore(String currentUsername, int currentRounds) {
         int highScore = 0;
         for (PlayerRounds rounds : playerRounds) {

@@ -1,7 +1,6 @@
 package application;
 
 import javafx.application.Application;
-
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
@@ -47,17 +46,21 @@ public class PVPHangmanGame extends Application {
     public void start(Stage primaryStage) {
         primaryStage.setTitle("Hangman Game");
 
+        // Set up the main menu layout
         VBox menuLayout = new VBox(20);
         menuLayout.setAlignment(Pos.CENTER);
 
+        // Add category selection ComboBox
         categoryComboBox = new ComboBox<>();
         categoryComboBox.getItems().addAll(Categories.getCategories());
         categoryComboBox.setValue("Animals"); // Default category
 
+        // Add start button and style it
         Button startButton = new Button("Start Game");
         startButton.setOnAction(e -> flipCoin(primaryStage));
         styleButton(startButton);
 
+        // Add components to the menu layout
         menuLayout.getChildren().addAll(categoryComboBox, startButton);
         Scene menuScene = new Scene(menuLayout, 600, 600);
         menuScene.getStylesheets().add(getClass().getResource("pvpGame.css").toExternalForm());
@@ -66,35 +69,38 @@ public class PVPHangmanGame extends Application {
     }
 
     public void flipCoin(Stage primaryStage) {
-    	VBox flipLayout = new VBox(20);
-    	flipLayout.setAlignment(Pos.CENTER);
-    	
-    	Label flipLabel = new Label("Flipping a coin to decide who starts...");
-    	flipLabel.setFont(Font.font("Arial", FontWeight.BOLD, 18));
-    	flipLabel.setTextFill(Color.WHITE);
-    	
-    	flipLayout.getChildren().add(flipLabel);
+        // Set up the coin flip layout
+        VBox flipLayout = new VBox(20);
+        flipLayout.setAlignment(Pos.CENTER);
+        
+        Label flipLabel = new Label("Flipping a coin to decide who starts...");
+        flipLabel.setFont(Font.font("Arial", FontWeight.BOLD, 18));
+        flipLabel.setTextFill(Color.WHITE);
+        
+        flipLayout.getChildren().add(flipLabel);
         flipLayout.setStyle("-fx-background-color: #2c3e50;");
         
-    	Scene flipScene = new Scene(flipLayout, 600, 600);
-    	flipScene.getStylesheets().add(getClass().getResource("coinFlip.css").toExternalForm());
-    	primaryStage.setScene(flipScene);
-    	primaryStage.show();
-    	
-    	Random random = new Random();
-    	currentPlayer = random.nextBoolean() ? 1 : 2;
-    	
-    	Label resultLabel = new Label("Player " + currentPlayer + " will start!");
+        Scene flipScene = new Scene(flipLayout, 600, 600);
+        flipScene.getStylesheets().add(getClass().getResource("coinFlip.css").toExternalForm());
+        primaryStage.setScene(flipScene);
+        primaryStage.show();
+        
+        // Randomly decide starting player
+        Random random = new Random();
+        currentPlayer = random.nextBoolean() ? 1 : 2;
+        
+        Label resultLabel = new Label("Player " + currentPlayer + " will start!");
         resultLabel.setFont(Font.font("Arial", FontWeight.BOLD, 18));
         
         Color resultColor = Color.web("#f77600");
         resultLabel.setTextFill(resultColor);
 
+        // Add continue button and style it
         Button continueButton = new Button("Continue");
         styleButton(continueButton);
         continueButton.setOnAction(e -> {
-        	primaryStage.close();
-        	startGame(primaryStage);
+            primaryStage.close();
+            startGame(primaryStage);
         });
 
         flipLayout.getChildren().addAll(resultLabel, continueButton);
@@ -106,12 +112,15 @@ public class PVPHangmanGame extends Application {
 
         initializeLabels();
         
+        // Create guess button
         Button guessButton = createGuessButton();
 
+        // Set up top layout
         VBox topLayout = new VBox(20);
         topLayout.getChildren().addAll(roundLabel, wordLabel, canvas, messageLabel, scoreLabel, hintLabel);
         topLayout.setAlignment(Pos.CENTER);
 
+        // Set up bottom layout
         HBox bottomLayout = new HBox(20);
         bottomLayout.setAlignment(Pos.CENTER);
         bottomLayout.getChildren().addAll(guessInput, guessButton);
@@ -133,33 +142,35 @@ public class PVPHangmanGame extends Application {
     }
     
     private void initializeLabels() {
-    	 wordLabel = new Label();
-         wordLabel.setFont(Font.font("Arial", FontWeight.BOLD, 24));
-         wordLabel.setTextFill(Color.BLACK);
+        // Initialize labels and text fields
+        wordLabel = new Label();
+        wordLabel.setFont(Font.font("Arial", FontWeight.BOLD, 24));
+        wordLabel.setTextFill(Color.BLACK);
 
-         hintLabel = new Label("Hint: ");
-         hintLabel.setFont(Font.font("Arial", FontWeight.NORMAL, 14));
-         hintLabel.setTextFill(Color.YELLOW);
+        hintLabel = new Label("Hint: ");
+        hintLabel.setFont(Font.font("Arial", FontWeight.NORMAL, 14));
+        hintLabel.setTextFill(Color.YELLOW);
 
-         guessInput = new TextField();
-         guessInput.setPromptText("Enter a letter");
-         guessInput.getStyleClass().add("styled-text-field");
+        guessInput = new TextField();
+        guessInput.setPromptText("Enter a letter");
+        guessInput.getStyleClass().add("styled-text-field");
 
-         messageLabel = new Label("Player " + currentPlayer + " starts!");
-         messageLabel.setFont(Font.font("Arial", FontWeight.NORMAL, 14));
-         messageLabel.setTextFill(Color.RED);
+        messageLabel = new Label("Player " + currentPlayer + " starts!");
+        messageLabel.setFont(Font.font("Arial", FontWeight.NORMAL, 14));
+        messageLabel.setTextFill(Color.RED);
 
-         roundLabel = new Label("Round: 1");
-         roundLabel.setFont(Font.font("Arial", FontWeight.BOLD, 18));
-         roundLabel.setTextFill(Color.RED);
+        roundLabel = new Label("Round: 1");
+        roundLabel.setFont(Font.font("Arial", FontWeight.BOLD, 18));
+        roundLabel.setTextFill(Color.RED);
 
-         scoreLabel = new Label("Player 1 : 0 | Player 2 : 0");
-         scoreLabel.setFont(Font.font("Arial", FontWeight.BOLD, 18));
-         scoreLabel.setTextFill(Color.WHITE);
+        scoreLabel = new Label("Player 1 : 0 | Player 2 : 0");
+        scoreLabel.setFont(Font.font("Arial", FontWeight.BOLD, 18));
+        scoreLabel.setTextFill(Color.WHITE);
     }
     
     private Button createGuessButton() {
-    	Button guessButton = new Button("Guess");
+        // Create guess button and set its action
+        Button guessButton = new Button("Guess");
         styleButton(guessButton);
         guessButton.setOnAction(e -> makeGuess());
 
@@ -172,6 +183,7 @@ public class PVPHangmanGame extends Application {
     }
 
     private void initializeGameState() {
+        // Initialize the game state with a random word and hint
         String category = categoryComboBox.getValue();
         String[] wordsWithHints = Categories.getWordsWithHints(category);
         Random random = new Random();
@@ -207,8 +219,8 @@ public class PVPHangmanGame extends Application {
                 drawHangman();
 
                 if (incorrectGuesses >= MAX_INCORRECT_GUESSES) {
-                	messageLabel.setText("Player " + currentPlayer + " has been hanged! The word was: " + wordToGuess);
-                	switchPlayer();
+                    messageLabel.setText("Player " + currentPlayer + " has been hanged! The word was: " + wordToGuess);
+                    switchPlayer();
                     displayRoundEnd();
                     return;
                 }
@@ -216,7 +228,7 @@ public class PVPHangmanGame extends Application {
             } else {
                 updateWordLabel(guessedLetter);
                 if (isWordGuessed()) {
-                	messageLabel.setText("Player " + currentPlayer + " guessed the word! The word was: " + wordToGuess);
+                    messageLabel.setText("Player " + currentPlayer + " guessed the word! The word was: " + wordToGuess);
                     playerPoints[currentPlayer - 1]++;
                     displayRoundEnd();
                     return;
@@ -228,8 +240,8 @@ public class PVPHangmanGame extends Application {
         }
     }
 
-
     private void updateWordLabel(char guessedLetter) {
+        // Update the displayed word with the guessed letter
         for (int i = 0; i < wordToGuess.length(); i++) {
             if (wordToGuess.charAt(i) == guessedLetter) {
                 currentGuess[i] = guessedLetter;
@@ -239,6 +251,7 @@ public class PVPHangmanGame extends Application {
     }
 
     private boolean isWordGuessed() {
+        // Check if the entire word has been guessed
         for (char c : currentGuess) {
             if (c == '_') {
                 return false;
@@ -248,6 +261,7 @@ public class PVPHangmanGame extends Application {
     }
 
     private String getCurrentGuessDisplay() {
+        // Construct and return the current state of the guessed word as a string
         StringBuilder display = new StringBuilder();
         for (char c : currentGuess) {
             display.append(c).append(' ');
@@ -256,7 +270,8 @@ public class PVPHangmanGame extends Application {
     }
 
     private void drawHangman() {
-    	GraphicsContext gc = canvas.getGraphicsContext2D();
+        // Draw the hangman figure based on the number of incorrect guesses
+        GraphicsContext gc = canvas.getGraphicsContext2D();
         gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
         gc.setFill(Color.WHITE);
         gc.setLineWidth(2.0);
@@ -281,12 +296,14 @@ public class PVPHangmanGame extends Application {
     }
 
     private void switchPlayer() {
+        // Switch the current player to the other player
         currentPlayer = currentPlayer == 1 ? 2 : 1;
         messageLabel.setText("Incorrect guess! Player " + currentPlayer + ", it's your turn.");
     }
 
     private void displayRoundEnd() {
-    	if (currentRound > TOTAL_ROUNDS || incorrectGuesses >= MAX_INCORRECT_GUESSES) {
+        // Display the end of the round and check if the game should continue or end
+        if (currentRound > TOTAL_ROUNDS || incorrectGuesses >= MAX_INCORRECT_GUESSES) {
             displayGameOver();
         } else {
             currentRound++;
@@ -297,9 +314,10 @@ public class PVPHangmanGame extends Application {
             messageLabel.setText("Player " + currentPlayer + " starts!");
         }
     }
-    
+
     private void displayGameOver() {
-    	guessInput.clear();
+        // Display the game over screen with the final scores and options to play again or return to main menu
+        guessInput.clear();
         guessInput.setDisable(true);
 
         String winner;
@@ -334,7 +352,8 @@ public class PVPHangmanGame extends Application {
     }
 
     private void resetForNewGame() {
-    	guessInput.setDisable(false);
+        // Reset the game state to start a new game
+        guessInput.setDisable(false);
 
         Button guessButton = new Button("Guess");
         guessButton.setOnAction(e -> makeGuess());
@@ -357,6 +376,7 @@ public class PVPHangmanGame extends Application {
     }
 
     private void returnToMainMenu(Stage stage) {
+        // Return to the main menu
         MainMenu mainMenu = new MainMenu();
         try {
             mainMenu.start(stage);
@@ -366,13 +386,17 @@ public class PVPHangmanGame extends Application {
     }
 
     private void styleButton(Button button) {
-    	button.getStyleClass().add("styled-button");
-    	
-    	button.setOnMouseEntered(e -> button.getStyleClass().add("styled-button-hover"));
+        // Apply CSS styling to a button
+        button.getStyleClass().add("styled-button");
+        
+        button.setOnMouseEntered(e -> button.getStyleClass().add("styled-button-hover"));
         button.setOnMouseExited(e -> button.getStyleClass().remove("styled-button-hover"));
     }
 
     public static void main(String[] args) {
+        // Launch the application
         launch(args);
     }
 }
+
+

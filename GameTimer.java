@@ -7,6 +7,11 @@ import javafx.event.EventHandler;
 import javafx.scene.control.Label;
 import javafx.util.Duration;
 
+/**
+ * The GameTimer class manages a countdown timer for the game. 
+ * It updates a provided Label with the remaining time and 
+ * executes a callback when the time is up.
+ */
 public class GameTimer {
     private Timeline timeline;
     private long startTime;
@@ -15,6 +20,13 @@ public class GameTimer {
     private Runnable timeUpCallback;
     private long duration;
 
+    /**
+     * Constructs a GameTimer with the specified label, callback, and duration.
+     * 
+     * @param timerLabel The label to update with the remaining time.
+     * @param timeUpCallback The callback to execute when time is up.
+     * @param duration The total duration of the timer in milliseconds.
+     */
     public GameTimer(Label timerLabel, Runnable timeUpCallback, long duration) {
         this.timerLabel = timerLabel;
         this.timeUpCallback = timeUpCallback;
@@ -22,6 +34,9 @@ public class GameTimer {
         this.totalElapsedTime = 0;
     }
 
+    /**
+     * Starts the timer and updates the label every second.
+     */
     public void startTimer() {
         if (timeline != null) {
             timeline.stop();
@@ -46,6 +61,9 @@ public class GameTimer {
         timeline.play();
     }
 
+    /**
+     * Pauses the timer, keeping track of the elapsed time.
+     */
     public void pauseTimer() {
         if (timeline != null) {
             timeline.pause();
@@ -54,6 +72,9 @@ public class GameTimer {
         }
     }
 
+    /**
+     * Resumes the timer from where it was paused.
+     */
     public void resumeTimer() {
         if (timeline != null) {
             startTime = System.currentTimeMillis();
@@ -61,6 +82,9 @@ public class GameTimer {
         }
     }
 
+    /**
+     * Stops the timer and calculates the total elapsed time.
+     */
     public void stopTimer() {
         if (timeline != null) {
             timeline.stop();
@@ -69,6 +93,9 @@ public class GameTimer {
         }
     }
 
+    /**
+     * Updates the label with the remaining time formatted as minutes and seconds.
+     */
     private void updateGameTime() {
         long remainingTime = duration - totalElapsedTime;
         if (remainingTime < 0) {
@@ -80,10 +107,20 @@ public class GameTimer {
         timerLabel.setText(String.format("%02d:%02d", minutes, seconds));
     }
 
+    /**
+     * Returns the total elapsed time across all rounds.
+     * 
+     * @return The total elapsed time in milliseconds.
+     */
     public long getTotalElapsedTime() {
         return totalElapsedTime;
     }
 
+    /**
+     * Returns the total duration of the timer.
+     * 
+     * @return The total duration in milliseconds.
+     */
     public long getDuration() {
         return duration;
     }

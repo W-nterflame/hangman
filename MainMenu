@@ -11,75 +11,103 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.scene.control.Button;
 
+/**
+ * MainMenu class sets up the main menu for the Hangman game.
+ * It extends the Application class, making it a JavaFX application.
+ */
 public class MainMenu extends Application {
 
+    /**
+     * The start method is the main entry point for JavaFX applications.
+     * It sets up the main menu scene and displays it.
+     */
     @Override
     public void start(Stage primaryStage) {
+        // Set the title of the primary stage
         primaryStage.setTitle("Hangman Game");
 
-        // Logo setup
+        // Create and set up the logo
         ImageView logoImageView = createLogoImageView();
         HBox logoBox = new HBox(logoImageView);
         logoBox.setAlignment(Pos.CENTER);
 
-        // Buttons setup
+        // Create and set up the buttons
         Button startSoloButton = new Button("Play Solo");
         Button startPVPButton = new Button("Play PvP");
         Button aboutButton = new Button("About");
         Button exitButton = new Button("Exit");
 
+        // Apply CSS styles to the buttons
         startSoloButton.getStyleClass().add("menu-button");
         startPVPButton.getStyleClass().add("menu-button");
         aboutButton.getStyleClass().add("menu-button");
         exitButton.getStyleClass().add("menu-button");
 
+        // Set up button actions
         startSoloButton.setOnAction(e -> startSoloGame(primaryStage));
         startPVPButton.setOnAction(e -> startPVPGame(primaryStage));
-        aboutButton.setOnAction(e->aboutMenu(primaryStage));
+        aboutButton.setOnAction(e -> aboutMenu(primaryStage));
         exitButton.setOnAction(e -> primaryStage.close());
 
+        // Arrange buttons in a vertical box
         VBox buttonBox = new VBox(20);
         buttonBox.getChildren().addAll(startSoloButton, startPVPButton, aboutButton, exitButton);
         buttonBox.setAlignment(Pos.CENTER);
 
-        // Main layout
+        // Set up the main layout
         BorderPane mainLayout = new BorderPane();
         mainLayout.setTop(logoBox);
         mainLayout.setCenter(buttonBox);
+        mainLayout.getStyleClass().add("menu-root");
 
-        mainLayout.getStyleClass().add("menu-root"); // Add the style class for the root
-
-        // Scene setup
-        Scene scene = new Scene(mainLayout, 800, 600); // Horizontal rectangle shape
+        // Create and set up the scene
+        Scene scene = new Scene(mainLayout, 800, 600);
         scene.getStylesheets().add(getClass().getResource("mainMenu.css").toExternalForm());
 
+        // Set the scene to the stage and display it
         primaryStage.setScene(scene);
         primaryStage.show();
     }
 
+    /**
+     * Creates and returns an ImageView for the game logo.
+     */
     private ImageView createLogoImageView() {
         Image logoImage = new Image(getClass().getResourceAsStream("logo.png"));
         ImageView logoImageView = new ImageView(logoImage);
-        logoImageView.setFitWidth(500); // Adjust width as needed
+        logoImageView.setFitWidth(500);
         logoImageView.setPreserveRatio(true);
         return logoImageView;
     }
 
+    /**
+     * Starts the solo game mode by launching the SoloHangmanGame class.
+     */
     private void startSoloGame(Stage primaryStage) {
         SoloHangmanGame soloGame = new SoloHangmanGame();
         soloGame.start(primaryStage);
     }
 
+    /**
+     * Starts the player vs. player game mode by launching the PVPHangmanGame class.
+     */
     private void startPVPGame(Stage primaryStage) {
         PVPHangmanGame pvpGame = new PVPHangmanGame();
         pvpGame.start(primaryStage);
     }
-    
+
+    /**
+     * Displays the "About" menu by launching the aboutMenu class.
+     */
     private void aboutMenu(Stage primaryStage) {
-    	aboutMenu about = new aboutMenu();
-    	about.start(primaryStage);
+        aboutMenu about = new aboutMenu();
+        about.start(primaryStage);
     }
 
+    /**
+     * The main method is the standard entry point for Java applications.
+     * It calls the launch method to start the JavaFX application.
+     */
     public static void main(String[] args) {
         launch(args);
     }

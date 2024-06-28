@@ -29,10 +29,7 @@
 	        primaryStage.setTitle("About Hangman Game");
 	
 	        // Credits text
-	        Text creditsText = new Text("Hangman Game\n\nDeveloped by:\nCST2209178\tZhang Siyu\r\n"
-	                + "CST2209196\tLie Kevin Nice\r\n"
-	                + "CST2209199\tWinata Bryan\r\n"
-	                + "CST2209656\tAarene Chin Chia Mei");
+	        Text creditsText = new Text("Hangman Game\n\nDeveloped by:\nGroup 3");
 	        creditsText.setStyle("-fx-font-size: 22px; -fx-font-family: 'Century Gothic'; -fx-font-weight: bold; -fx-fill: white; -fx-text-alignment: center;");
 	
 	        StackPane creditsPane = new StackPane(creditsText);
